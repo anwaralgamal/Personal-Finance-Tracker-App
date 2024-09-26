@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            margin: 5px;
+            padding: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .recommendation {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <h2>Financial Summary</h2>
+    <p><strong>Income:</strong> ${{ income }}</p>
+    <p><strong>Expenses:</strong> ${{ expenses }}</p>
+    <p><strong>Remaining Budget:</strong> ${{ budget_left }}</p>
+
+    <h2>Set Your Budget</h2>
+    <form method="POST" action="{{ url_for('set_budget') }}">
+        <input type="number" name="budget" placeholder="Set your budget" required>
+        <button type="submit">Update Budget</button>
+    </form>
+
+    <h2>Spending Breakdown</h2>
+    <ul>
+        {% for category, percentage in category_percentages.items() %}
+            <li>{{ category }}: {{ "%.2f" % percentage }}%</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Expenses by Category</h2>
+    <img src="data:image/png;base64,{{ plot_url }}" alt="Expenses by Category">
+
+    <h2>Recommendations</h2>
+    <ul>
+        {% for recommendation in recommendations %}
+            <li class="recommendation">{{ recommendation }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add Transaction</h2>
+    <form method="POST" action="{{ url_for('add_transaction') }}">
+        <input type="number" name="amount" placeholder="Amount" required>
+        <input type="text" name="category" placeholder="Category" required>
+        <select name="transaction_type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+        </select>
+        <button type="submit">Add Transaction</button>
+    </form>
+
+    <h2>Your Transactions</h2>
+    <ul>
+        {% for transaction in transactions %}
+            <li>{{ transaction.date }}: {{ transaction.transaction_type }} of {{ transaction.amount }} in {{ transaction.category }}</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
